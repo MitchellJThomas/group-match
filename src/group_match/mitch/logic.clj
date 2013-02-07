@@ -4,7 +4,7 @@
   (:refer-clojure :exclude [==])
   (:use [clojure.core.logic]))
 
-;; My (Mitch Thomas') first attempt at using core.logic... WOOT!
+;; My (Mitch Thomas) first attempt at using core.logic... WOOT!
 
 ;; Give me all combinations where new two items appear in the same group more than once (or twice if we want to be a little looser).
 ;; (def classes [:C1 :C2 :C3])
@@ -56,24 +56,23 @@
 ;;  a student can not be in the same group twice (distincto)
 ;;  no pairing of students is the same as the last pairing of students
 
-(def students [:Finley :Lark :Julie :Mitch :Gary :Jim :Yvonne :Elaine :A :B :C :D :E :F :G :H :I :J :K :L :M])
+(def students [:Finley :Lark :Julie :Mitch :Gary :Jim :Yvonne :Elaine :A :B :C :D :E :F :G :H :I :J :K :L])
 
 ;; Successfull for any even divisions of ct
-(defne even-groupo [ct out]
+(defne even-groupo [ct gt out]
   ([]
      (fresh [x y]
-         (c_fd/in x (c_fd/interval 2 ct))
-         (c_fd/in y (c_fd/interval 2 ct))
+         (c_fd/in y (c_fd/interval gt (- ct 1)))
+         (c_fd/in x (c_fd/interval 1 (- ct 1)))
          (c_fd/* x y ct)
-         (== out x))))
+         (== out [x y]))))
 
 (comment
   (run 40 [out]
        (subseto out students)
        (matche [out]
-               ([[_ _ _]] succeed)))
+               ([[_ _]] succeed)))
 
   (let [ct (count students)]
-      (run* [q] (even-groupo ct q)))
-
+    (run* [q] (even-groupo ct 2 q)))
 )
