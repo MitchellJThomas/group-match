@@ -8,15 +8,15 @@
 
 ;; Give me all combinations where new two items appear in the same group more than once (or twice if we want to be a little looser).
 ;; (def classes [:C1 :C2 :C3])
-;; (def students [:F :L :J :M]
+;; (def students [:F :L :J :M :A :B]
 ;; Possible answer
-;; C1: (F L) (J M)
-;; C2: (F J) (M L)
-;; C3: (F M) (J L)
+;; C1: (F L A) (J M B)
+;; C2: (F J A) (M L B)
+;; C3: (F M A) (J L B)
 
 ;; taken from https://github.com/ejackson/EuroClojure-2012-Talk/blob/master/src/timetable/demo.clj
 (defne permo
-  "Succeeds if x1 is a permutation of x2."
+  "Succeeds if v1 is a permutation of v2."
   [v1 v2]
   ([[] []])
   ([[h . t] v2]
@@ -50,16 +50,15 @@
 
 ;; Attempt to re-state the problem space in terms of goals  
 ;; given a total set of students
-;; create unique subsets of the total set of students
-;; whose size should be an equal division of the total set of students
+;; create groups for each class
+;; each class should have unique groups from the previous class
 ;; where unique is defined as
-;;  a student can not be in the same group twice (distincto)
-;;  no pairing of students is the same as the last pairing of students
+;;  for group least one member of the group is different
 
 (def students [:Finley :Lark :Julie :Mitch :Gary :Jim :Yvonne :Elaine :A :B :C :D :E :F :G :H :I :J :K :L])
 
 ;; Successfull for any even divisions of ct
-(defne even-groupo [ct gt out]
+(defne even-splito [ct gt out]
   ([]
      (fresh [x y]
          (c_fd/in y (c_fd/interval gt (- ct 1)))
@@ -67,12 +66,19 @@
          (c_fd/* x y ct)
          (== out [x y]))))
 
+(defne groupo [l out]
+  ([]
+     (subseto out l)
+     (matche [out] ([[_ _ _ _]] succeed))))
+
 (comment
-  (run 40 [out]
-       (subseto out students)
-       (matche [out]
-               ([[_ _]] succeed)))
+  (run 40 [out] (groupo students out))
+
+  (run 4 [out]
+       (permuteo out students)
+       (matche [out] ([[_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _]] succeed))
+       )
 
   (let [ct (count students)]
-    (run* [q] (even-groupo ct 2 q)))
+    (run* [q] (even-splito ct 2 q)))
 )
