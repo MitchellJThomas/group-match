@@ -55,6 +55,7 @@
 ;; where unique is defined as
 ;;  for group least one member of the group is different
 
+
 ;; Successfull for any even divisions of ct
 (defne even-splito [ct gt out]
   ([]
@@ -77,17 +78,13 @@
   ;; Taking inspiration from http://worrydream.com/#!/LearnableProgramming, trying to "break it down" (and get funky!)
   ;; For each session, separate the class of N students into groups of X students
   ;; For each session, each group of students should be unique from group in the previous session
-  ;; "Unify" a class of stundents to class
+  ;; "Unify" a class of students to class
   ;; (== class [1 2 3 4 5 6 7 8 9 10 11 12 13 141 5 16 17 18 19 20])
   ;; Break down the class into named groups
   ;; session => (== class [( == g1 [_ _ _ _ _]) (== g2 [_ _ _ _ _]) (== g3 [_ _ _ _ _]) (== g4 [_ _ _ _ _])])
   ;; For each named group, this group should be uniqe from the previous group
   ;; session => (unique g1 prev-g1) (unique g2 prev-g2) (unique g3 prev-g3) (unique g4 prev-g4)
 
-  ;; For each session, group of X students out of a classroom of N students until the entire classroom is grouped
-  (run 5 [out]
-       (conso students out))
-  
   (run 20 [out]
        (fresh [g1 g2 g3 g4]
        (matche [students]
@@ -97,39 +94,28 @@
                ([[_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ?a ?b ?c ?d ?e . _]] (== g4 ["d " ?a ?b ?c ?d ?e])))
        (== out [g1 g2 g3 g4])))
 
-  (run 4 [out]
-       (permo out [:a :b :c :d] ))
+  (def b  (run 10 [out]
+              (subseto2 out students)))
+  (def a (run 10 [out]
+              (subseto out students)))
 
-  (run 7 (membero :Lark astudents)
 
-  (run 1 [students groups]
-       (fresh
-        [g11 g12 g13 g14 g15
-         g21 g22 g23 g24 g25
-         g31 g32 g33 g34 g35]
+  (run 3 [out]
+       (conda 
+        (project [x b]
+                 (== (<= x b) true))
+        (== 1 2)))
 
-        (groupo students g11)
-        (groupo students g12)
-        (groupo students g13)
-        (groupo students g14)
-        (groupo students g15)
-        (groupo students g21)
-        (groupo students g22)
-        (groupo students g23)
-        (groupo students g24)
-        (groupo students g25)
-        (groupo students g31)
-        (groupo students g32)
-        (groupo students g33)
-        (groupo students g34)
-        (groupo students g35)
-        (== [[g11 g12 g13 g14 g15][g21 g22 g23 g24 g25][g31 g32 g33 g34 g35]] groups)
-        ))
-        
+  (run 4 [out]  (fresh [x l l1] (matche [[:a1 :b1] :a2 [:a1 :b2] :a3]
+                                        ([[x . l] _ [x . l1] _] (== out ["x" x "l" l  "l1" l1])))))
+
+  (run 10 [o]
+       (fresh [o2] 
+              (permuteo students o2)
+              (matche [o2] ([[?a1 ?a2 ?a3 ?a4 ?a5 ?a6 ?a7 ?a8 ?a9 ?a10 ?a11 ?a12 ?a13 ?a14 ?a15 ?a16 ?a17 ?a18 ?a19 ?a20]]
+                      (== o [[?a1 ?a2 ?a3 ?a4] [?a5 ?a6 ?a7 ?a8] [?a9 ?a10 ?a11 ?a12] [?a13 ?a14 ?a15 ?a16] [?a17 ?a18 ?a19 ?a20]])))))
 
   
-  (run 3 [out] (groupo students out))
-
   (let [ct (count students)]
     (run* [q] (even-splito ct 2 q)))
 )
