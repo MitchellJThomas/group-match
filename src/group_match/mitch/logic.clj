@@ -15,17 +15,6 @@
 ;; C3: (F M A) (J L B)
 
 ;; taken from https://github.com/ejackson/EuroClojure-2012-Talk/blob/master/src/timetable/demo.clj
-(defne permo
-  "Succeeds if v1 is a permutation of v2."
-  [v1 v2]
-  ([[] []])
-  ([[h . t] v2]
-     (fresh [rv2]
-            (membero h v2)
-            (rembero h v2 rv2)
-            (permo t rv2))))
-
-;; taken from https://github.com/ejackson/EuroClojure-2012-Talk/blob/master/src/timetable/demo.clj
 (defne subseto
   "Succeeds if x1 is a subset of x2.  x1 is distinct with elements of x2 but is shorter than or equal to x2"
   [x1 x2]
@@ -74,6 +63,9 @@
                :Jim :Yvonne :Elaine :Coby :Klarisa
                :Emily :Cora :Kevin :Heather :Rick
                :Hazel :Beau :Duke :Scout :Happy])
+
+(def students1 [:Finley :Lark :Julie :Duke :Gary :Jim])
+
 (comment
   ;; Taking inspiration from http://worrydream.com/#!/LearnableProgramming, trying to "break it down" (and get funky!)
   ;; For each session, separate the class of N students into groups of X students
@@ -85,7 +77,25 @@
   ;; For each named group, this group should be uniqe from the previous group
   ;; session => (unique g1 prev-g1) (unique g2 prev-g2) (unique g3 prev-g3) (unique g4 prev-g4)
 
-  (run 20 [out]
+  (run 5 [grouped-class]
+       (fresh [g1 g2 g3]
+              (!= g1 g2)
+              (!= g1 g3)
+              (!= g2 g3)
+              (!= g1 '())
+              (!= g2 '())
+              (!= g3 '())
+              (distincto g1)
+              (distincto g2)
+              (distincto g3)
+              (subseto g1 students1)
+              (subseto g2 students1)
+              (subseto g3 students1)
+;;              (permuteo [g1 g2 g3] students1)
+              (== grouped-class [g1 g2 g3])
+              ))
+
+  (run 3 [out]
        (fresh [g1 g2 g3 g4]
        (matche [students]
                ([[?a ?b ?c ?d ?e . _]] (== g1 ["a " ?a ?b ?c ?d ?e]))
@@ -93,21 +103,6 @@
                ([[_ _ _ _ _ _ _ _ _ _ ?a ?b ?c ?d ?e . _]] (== g3 ["c " ?a ?b ?c ?d ?e]))
                ([[_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ?a ?b ?c ?d ?e . _]] (== g4 ["d " ?a ?b ?c ?d ?e])))
        (== out [g1 g2 g3 g4])))
-
-  (def b  (run 10 [out]
-              (subseto2 out students)))
-  (def a (run 10 [out]
-              (subseto out students)))
-
-
-  (run 3 [out]
-       (conda 
-        (project [x b]
-                 (== (<= x b) true))
-        (== 1 2)))
-
-  (run 4 [out]  (fresh [x l l1] (matche [[:a1 :b1] :a2 [:a1 :b2] :a3]
-                                        ([[x . l] _ [x . l1] _] (== out ["x" x "l" l  "l1" l1])))))
 
   (run 10 [o]
        (fresh [o2] 
